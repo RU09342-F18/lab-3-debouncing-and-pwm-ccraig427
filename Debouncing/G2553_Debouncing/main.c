@@ -39,7 +39,7 @@ int main(void)
 __interrupt void TIMER0_A1(void)
 {
     P1OUT ^= BIT0; //Toggles P1.0/LED
-    TA0CTL = TASSEL_2 + ID_1 + MC_0; //
+    TA0CTL = TASSEL_1 + ID_1 + MC_0; //ACLK, Integer Divide of 1 bit, Stop Mode
     TACTL |= TACLR; //Clears TimerA
     P1IE |= BIT3; //Re-enables interrupts on P1.3
     P1IFG &= ~BIT3; //Clears Interrupt Flag
@@ -49,9 +49,10 @@ __interrupt void TIMER0_A1(void)
 #pragma vector=PORT1_VECTOR
 __interrupt void Button_down(void)   //Button Interrupt
 {
-    TA0CTL = TASSEL_2 + ID_1 + MC_1; //Selects SMCLK, and in Up Mode
+    TA0CTL = TASSEL_1 + ID_1 + MC_1; //Selects ACLK, and in Up Mode
     P1IE &= ~BIT3; //Disables any interrupts from P1.3
     P1IFG &= ~BIT3; //Clears interrupt flags
 }
+
 
 
