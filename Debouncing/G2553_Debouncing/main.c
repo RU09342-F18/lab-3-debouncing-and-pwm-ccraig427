@@ -39,7 +39,7 @@ int main(void)
 __interrupt void TIMER0_A1(void)
 {
     P1OUT ^= BIT0; //Toggles P1.0/LED
-    TA0CTL = TASSEL_2 + ID_1 + MC_0;
+    TA0CTL = TASSEL_2 + ID_1 + MC_0; //
     TACTL |= TACLR; //Clears TimerA
     P1IE |= BIT3; //Re-enables interrupts on P1.3
     P1IFG &= ~BIT3; //Clears Interrupt Flag
