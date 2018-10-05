@@ -4,7 +4,7 @@
  * MSP430F5529 Software Debouncing
  * Author: Colin Craig
  * Created: 10/1/2018
- * Last Edited:
+ * Last Edited: 10/5/2018
  */
 
 void LEDSetup()
@@ -23,7 +23,7 @@ void ButtonSetup()
 
 void TimerBSetup()
 {
-    TB0CTL = TBSSEL_1 + MC_0; //TimerB, ACLK, timer stop
+    TB0CTL = TBSSEL_1 + ID_1 + MC_0; //TimerB, ACLK, Integer Divide of 1 bit, timer stop
     TB0CCTL0 = CCIE; //Capture and Compare Interrupt
     TB0CCR0 = 2000; //Sets Value of Capture and Compare Register
 }
@@ -42,7 +42,7 @@ int main(void)
 #pragma vector =PORT2_VECTOR //Button Interrupt
 __interrupt void Button_down(void)
 {
-    TB0CTL = TBSSEL_1 + MC_1; //TimerB, ACLK, count up to CCR0
+    TB0CTL = TBSSEL_1 + ID_1 + MC_1; //TimerB, ACLK, Integer Divide of 1 bit, count up to CCR0 in Up Mode
     P2IE &= ~BIT1; //Disables any interrupts from P2.1
     P2IFG &= ~BIT1; //Clears any interrupt flags
 }
@@ -52,8 +52,9 @@ __interrupt void TIMER0_B1(void)
 {
 
     P1OUT ^= BIT0; //Toggles P1.0/LED
-    TB0CTL = MC_0; //Stop Mode
+    TB0CTL = TBSSEL_1 + ID_1 + MC_0; //ACLK, Integer Divide of 1 bit, Stop Mode
     TBCTL |= TBCLR; //Clears TimerB
     P2IFG &= ~BIT1; //Clears P2.1 Interrupt Flags
     P2IE |=  BIT1; //Re-enables interrupts on P2.1
 }
+
