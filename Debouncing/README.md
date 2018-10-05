@@ -1,18 +1,9 @@
 # Software Debouncing
-In previous labs, we talked about how objects such as switches can cause some nasty effects since they are actually a mechanical system at heart. We talked about the simple hardware method of debouncing, but due to the many different design constraints, you may not be able to add or adjust hardware. Debouncing is also only one of many applications which would require the use of built in Timers to allow for other processes to take place.
+## Author: Colin Craig 
+### Embedded Systems Section 1
 
-## Task
-You need to utilize the TIMER modules within the MSP430 processors to implement a debounced switch to control the state of an LED. You most likely will want to hook up your buttons on the development boards to an oscilloscope to see how much time it takes for the buttons to settle. The idea here is that your processor should be able to run other code, while relying on timers and interrupts to manage the debouncing in the background. *You should not be using polling techniques for this assignment.*
-
-## Deliverables
-You will need to have two folders in this repository, one for each of the processors that you used for this part of the lab. Remember to replace this README with your own.
-
-### Hints
-You need to take a look at how the P1IE and P1IES registers work and how to control them within an interrupt routine. Remember that the debouncing is not going to be the main process you are going to run by the end of the lab.
-
-## Extra Work
-### Low Power Modes
-Go into the datasheets or look online for information about the low power modes of your processors and using Energy Trace, see what the lowest power consumption you can achieve while still running your debouncing code. Take a note when your processor is not driving the LED (or unplug the header connecting the LED and check) but running the interrupt routine for your debouncing.
-
-### Double the fun
-Can you expand your code to debounce two switches? Do you have to use two Timer peripherals to do this?
+My task was to use the TIMER modules to implement a debounced switch to control the state of an LED. To do this, I had to use a capture and compare register value for the TIMER to count up to in Up mode. This interrupt is initialized once the button is pressed. Once this TIMER reached that value, it reset back to zero and went into stop mode. An interrupt is then set on the falling edge of the TIMER that allows the LED to toggle. The time for the TIMER to reach the CCR value is the delay time for any unnecessary interrupts from button debouncing. Once the button is pressed again, the TIMER continues incrementing and the process repeats. If you wanted to change the time for the LED to toggle after the button is pressed, you can increase the value of the CCR or set the integer divide to either 2 or 3 bits. This would be useful if more time needed to be allotted for button debouncing. 
+### G2553 
+For this microcontroller, TIMER A was used. The configurations for the LED, button, and timer setup are all encoded within each others functions. This makes my code easier to debug and also translate between microcontroller. ACLK was used for TIMER A. The CCR value was set at 2000. To extend the time for the TIMER to reach that value, the register TA0CTL was also integer divided by 1 bit. 
+### F5529 
+For this microcontroller, TIMER B was used. The configurations and code were all the same compared to the G2553. 
