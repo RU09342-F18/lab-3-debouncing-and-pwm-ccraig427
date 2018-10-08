@@ -1,4 +1,5 @@
 # Hardware PWM
+## Author: Colin Craig
 Now that you have done the software version of PWM, now it is time to start leveraging the other features of these Timer Modules.
 
 ## Task
