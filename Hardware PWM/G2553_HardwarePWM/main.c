@@ -15,6 +15,7 @@ int main(void)
     LEDSetup(); //Initializes LEDSetup function
     ButtonSetup(); //Initializes ButtonSetup function
     TimerA0Setup(); //Initializes TimerA0 function
+//    TimerA1Setup();
 
     __enable_interrupt();
     __bis_SR_register(GIE); //Global Interrupts Enabled
@@ -45,6 +46,13 @@ void TimerA0Setup(void)
     TA0CTL = TASSEL_2 + MC_1; //SMLCK, Up-Mode configuration on TimerA0 Control Register
 }
 
+// void TimerA1Setup(void)
+//{
+//    TA1CTL = TASSEL_2 + MC_1; //SMCLK, Up-Mode configuration on TimerB0 Control Register
+//    TA1CCTL0 = CCIE + CCIFG; //Capture/Compare interrupt enabled, Enables pending interrupts
+//    TA1CCR0 = 15000; //Capture/Compare Register value for P1.1
+//}
+
 #pragma vector=PORT1_VECTOR
 __interrupt void Port_1(void)
 {
@@ -62,4 +70,11 @@ __interrupt void Port_1(void)
     P1OUT ^= BIT0; //Toggles P1.0 LED
     P1IES ^= BIT3; //Toggles Interrupt Edge Register
     P1IFG &= ~BIT3; //Disables P1.3 Interrupt Flags
+//    TA1CTL = TASSEL_2 + MC_1; //SMCLK, Up-Mode configuration on TimerB0 Control Register
 }
+
+//#pragma vector = TIMER0_A1_VECTOR
+//__interrupt void Timer_A (void) {
+//    TA1CTL = MC_0; //TimerB0 Control register in stop mode
+//    P1IE |= BIT3; //Enables P1.1 Interrupts
+//}
