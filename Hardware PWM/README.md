@@ -1,19 +1,10 @@
 # Hardware PWM
 ## Author: Colin Craig
-Now that you have done the software version of PWM, now it is time to start leveraging the other features of these Timer Modules.
+### Embedded Systems: Section 1
+Unlike software PWM, our task was to use the capabilities of the Timer Modules, specifically the Capture/Control Control Register (TAxCCTL1 and TBxCCTL1), to directly control the GPIO pins. To do this, the register has to be equal to OUTMOD_7, which sets the register to set/reset mode. For this part of the lab, I used the G2553 and FR2311 development boards. Both development boards use Up-down mode and SMCLK. It works by pressing the button to increment the duty cycle of one of the LEDS by 10%. It starts at 50% duty cycle and increments to 100% and then resetting back to zero. This condition is tested after everytime the button is pressed, which sends an interrupt on the falling edge of the button press. Also, PxSEL must be set for the PWM LED to a GPIO functionality. 
+### G2553 
+For this development board, TimerA0 was used. I tried replicating my code from the FR2311 to the G2553, but the debounce interrupt was not working as planned. Within this board, P1.0 and P1.6 are ports used to toggle the LEDS. Specifically, P1.6 is the PWM LED and P1.0 is the button press toggle. The button is set an input on P1.3. 
+### FR2311 
+For this development board, TimerB0 and TimerB1 were used. TimerB0 is used as a debounce interrupt on the button press which is P1.1. The LEDS used are controlled by P1.0 and P2.0. TimerB1 is used to increment and reset the duty cycle of the PWM LED. 
 
-## Task
-You need to replicate the same behavior as in the software PWM, only using the Timer Modules ability to directly output to a GPIO Pin instead of managing them in software. One way to thing about what should happen is that unless your are doing some other things in your code, your system should initialize, set the Timer Modules, and then turn off the CPU.
 
-## Deliverables
-You will need to have two folders in this repository, one for each of the processors that you used for this part of the lab. Remember to replace this README with your own.
-
-### Hints
-Read up on the P1SEL registers as well as look at the Timer modules ability to multiplex.
-
-## Extra Work
-### Using ACLK
-Some of these microprocessors have a built in ACLK which is extremely slow compared to your up to 25MHz available on some of them. What is the overall impact on the system when using this clock? Can you actually use your PWM code with a clock that slow?
-
-### Ultra Low Power
-Using a combination of ACLK, Low Power Modes, and any other means you may deem necessary, optimize this PWM code to run at 50% duty cycle with a LED on the MSP430FR5994. In particular, time how long your code can run on the fully charged super capacitor. You do not need to worry about the button control in this case, and you will probably want to disable all the GPIO that you are not using (nudge, nudge, hint, hint).
