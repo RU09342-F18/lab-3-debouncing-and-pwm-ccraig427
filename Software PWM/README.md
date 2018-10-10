@@ -1,33 +1,12 @@
 # Software PWM
-Most microprocessors will have a Timer module, but depending on the device, some may not come with pre-built PWM modules. Instead, you may have to utilize software techniques to synthesize PWM on your own.
-
-## Task
-You need to generate a 1kHz PWM signal with a duty cycle between 0% and 100%. Upon the processor starting up, you should PWM one of the on-board LEDs at a 50% duty cycle. Upon pressing one of the on-board buttons, the duty cycle of the LED should increase by 10%. Once you have reached 100%, your duty cycle should go back to 0% on the next button press. You also need to implement the other LED to light up when the Duty Cycle button is depressed and turns back off when it is let go. This is to help you figure out if the button has triggered multiple interrupts.
-
-## Deliverables
-You will need to have two folders in this repository, one for each of the processors that you used for this part of the lab. Remember to replace this README with your own.
-
-### Hints
-You really, really, really, really need to hook up the output of your LED pin to an oscilloscope to make sure that the duty cycle is accurate. Also, since you are going to be doing a lot of initialization, it would be helpful for all persons involved if you created your main function like:
-
-```c
-int main(void)
-{
-	WDTCTL = WDTPW | WDTHOLD;	// stop watchdog timer
-	LEDSetup(); // Initialize our LEDS
-	ButtonSetup();  // Initialize our button
-	TimerA0Setup(); // Initialize Timer0
-	TimerA1Setup(); // Initialize Timer1
-	__bis_SR_register(LPM0_bits + GIE);       // Enter LPM0 w/ interrupt
-}
-```
-
-This way, each of the steps in initialization can be isolated for easier understanding and debugging.
+## Author: Colin Craig 
+### Embedded Systems Section 1 
+I was tasked in this part of the lab to create a varying pulse width modulation on an LED based on a button press interrupt. I attempted three different boards with this task: G2553, F5529, and P401R. I was unsuccessful with the P401R. In this software PWM, two timer modules were used, a state machine, a for loop, one LED, and one button. Timer A0 was used to configure the PWM configuration. This worked by using a capture/compare register set to 1000. The reason this value was picked was due to the clock speed of SMCLK which is 1 MHZ. Picking 1000 would allow the LED to toggle at 1 kHZ. Initially, the duty cycle was set to 500. This is the value of a varying capture/compare register that controls the PWM. This register value is manipulated within the Timer A0 interrupt in a state machine with two possible states. One, the LED is on for the time the timer is incrementing to the duty cycle register value. Two, the LED is off when the value has been reached and a falling edge is detected. When the LED is off, the button interrupt flag, timer, and SMCLK are either disabled or cleared. An interrupt is then set when a rising edge is detected which then also switches the states. The other timer, Timer A1, is used for debouncing purposes of the button press. The capture/compare register is set to allow a 2 ms delay once the button is pressed, so no unwanted debouncing would occur. Lastly, the for loop is used to reset the duty cycle to zero once it has reached the max value of 1000. 
+### G2553 
+In the G2553, P1.3 is used for the button press/interrupt and P1.6 is used to toggle the LED. Timers A0 and A1 are both used for debouncing and button interrupts. 
+### F5529 
+In the F5529, P1.1 is used for the button press/interrupt and P1.0 is used to toggle the LED. Like the other board, both Timers A0 and A1 were used. Other then the difference in pin assignments, the implementation of this task was the same between the boards. 
+### P401R 
+Kevin Beenders and I attempted to complete this task on the P401R. We were unsuccessful in running an errorless code file. The way this board works is very different then the other three and takes more time to master and complete. 
 
 
-## Extra Work
-### Linear Brightness
-Much like every other things with humans, not everything we interact with we perceive as linear. For senses such as sight or hearing, certain features such as volume or brightness have a logarithmic relationship with our senses. Instead of just incrementing by 10%, try making the brightness appear to change linearly.
-
-### Power Comparison
-Since you are effectively turning the LED off for some period of time, it should follow that the amount of power you are using over time should be less. Using Energy Trace, compare the power consumption of the different duty cycles. What happens if you use the pre-divider in the timer module for the PWM (does it consume less power)?
